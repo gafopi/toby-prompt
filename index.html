@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html style="height:100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+
+    <title>Toby Prompt</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script src="https://s3.amazonaws.com/toby.cloud/mqttws31.js"></script>
+    <script src="https://s3.amazonaws.com/toby.cloud/toby.js"></script>
+    <link rel="stylesheet" href="prompt.css">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+</head>
+
+<body onclick="document.getElementById('prompt').focus();">
+
+  <div id="app" style="padding:10px;" v-bind:style="{color: mainColor}">
+    <div v-if="online">
+      <!-- History -->
+      <div v-for="(line, id) in lines">
+        <span v-if="hidden.indexOf(line.from) < 0" style="line-height:20px;">
+          <span v-if="line.time" v-bind:style="{color: timeColor}">{{line.time}}</span>
+          <span v-if="line.from" v-bind:style="{color: fromColor}">@{{line.from}}:</span>
+          <span v-bind:style="{color: line.color || mainColor}">{{line.text}}</span>
+          <div v-if="line.image">
+            <br>
+            <img style="width:500px;background-color:white;" v-bind:src="line.image">
+          </div>
+      </div>
+      <form v-on:submit="enterCommand">
+        <!-- MAIN PROMPT -->
+        <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+      </form>
+    </div>
+    <div v-else>
+      <div v-if="id == ''">
+        <!-- ENTER USERNAME -->
+        <form v-on:submit="enterUsername">
+          <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+        </form>
+      </div>
+      <div v-else>
+        <!-- ENTER PASSWORD -->
+        <form v-on:submit="enterPassword">
+          <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div><img style="position:fixed;width:30px;bottom:0;right:0;padding:5px;" src="toby.png"></div>
+
+  <script type="text/javascript" src="client.js"></script>
+
+</body>
+</html>

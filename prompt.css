@@ -1,0 +1,48 @@
+
+body {
+    background-color: black;
+    color: dodgerblue;
+    font-family: 'Roboto Mono';
+    font-size: 12px;
+    height: 100%;
+    width:100%;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+input {
+    background-color: black;
+    color: white;
+    font-family: monospace;
+    font-size: 12px;
+    border: none;
+    border-width: 0px;
+    outline: none;
+    width: 75vw;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0;
+    margin:0;
+}
+
+span {
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+
+video {
+	width:100%;
+	background-color: black;
+
+}
+
+aside {
+	width: 30vw;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+}
