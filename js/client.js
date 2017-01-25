@@ -8,13 +8,12 @@ var onConnect = function() {
   app.online = true;
   bot.info("initial_info");
   document.onkeydown = checkKey;
-
 }
 
 var onDisconnect = function() {
   app.online = false;
   app.id = "";
-  app.prompt = "username: ";
+  app.prompt = "botname: ";
   app.lines = [];
 }
 
@@ -40,7 +39,7 @@ var onMessage = function(message) {
     } else if ('png' in message.payload) {
       app.lines.push({from: message.from, image: "data:image/png;base64," + message.payload['png'], time: moment().format("H:mm:ss")});
     } else if ('online' in message.payload) {
-      app.lines.push({text: message.payload['online'] + ' is online', time: moment().format("H:mm:ss"), color: "yellow"});
+      app.lines.push({text: message.payload['online'] + ' is online', time: moment().format("H:mm:ss"), color: "dodgerblue"});
     } else if ('offline' in message.payload) {
       app.lines.push({text: message.payload['offline'] + ' is offline', time: moment().format("H:mm:ss"), color: "red"});
     } else if ('status' in message.payload) {
@@ -66,10 +65,10 @@ Vue.use(VueMaterial.MdSidenav)
 Vue.use(VueMaterial.MdToolbar)
 
 Vue.material.registerTheme('default', {
-  primary: 'black',
+  primary: 'red',
   accent: 'blue',
   warn: 'red',
-  background: 'black'
+  background: 'white'
 });
 
 
@@ -79,14 +78,14 @@ var app = new Vue({
     id: "",
     type: "",
     command: "",
-    prompt: "username: ",
+    prompt: "botname: ",
     history: [],
     historyIndex: -1,
     online: false,
     lines: [],
     hidden: [],
-    mainColor: "white",
-    fromColor: "aqua",
+    mainColor: "black",
+    fromColor: "dodgerblue",
     timeColor: "grey"
   },
   methods: {
@@ -285,17 +284,15 @@ var app = new Vue({
 
         app.lines.push({from: info.from, time: moment().format("H:mm:ss"), info: info});
 
-      } else if (app.type == "standard") {
-        app.println(JSON.stringify(info), false, "yellow");
-      } else if (app.type == "socket") {
-        app.println(JSON.stringify(info), false, "yellow");
+      } else if (app.type == "standard" || app.type == "socket") {
+          app.println(JSON.stringify(info,null,2), false, "dodgerblue");
       }
     },
 
     displayHelp() {
-      if (app.type == "user") app.println(["(i)nfo", "(s)end", "(c)reate bot", "(r)emove bot", "(q)uit"], false, "yellow");
-      if (app.type == "standard") app.println(["(i)nfo", "(s)end", "(f)ollow", "(u)nfollow", "(c)reate socket", "(r)emove socket", "hooks (on)", "hooks (off)"], false, "yellow");
-      if (app.type == "socket") app.println(["(i)nfo", "(s)end", "(q)uit"], false, "yellow");
+      if (app.type == "user") app.println(["(i)nfo", "(s)end", "(c)reate bot", "(r)emove bot", "(q)uit"], false, "dodgerblue");
+      if (app.type == "standard") app.println(["(i)nfo", "(s)end", "(f)ollow", "(u)nfollow", "(c)reate socket", "(r)emove socket", "hooks (on)", "hooks (off)"], false, "dodgerblue");
+      if (app.type == "socket") app.println(["(i)nfo", "(s)end", "(q)uit"], false, "dodgerblue");
     },
 
   }

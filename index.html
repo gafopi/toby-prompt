@@ -22,7 +22,6 @@
 <body onclick="document.getElementById('prompt').focus();">
 
   <div id="app" v-bind:style="{color: mainColor}">
-
     <!-- TOOLBAR -->
     <div v-if="!online">
       <md-toolbar><h1 class="md-title">toby</h1></md-toolbar>
@@ -38,19 +37,25 @@
           <span v-if="hidden.indexOf(line.from) < 0" style="line-height:20px;">
 
             <div v-if="line.info">
-              <md-card>
-                <md-card-header>
-                  <div class="md-title">{{line.info.id}}</div>
-                  <div class="md-subhead">{{line.info.type}} bot</div>
-                </md-card-header>
-                <md-card-content>
-                  <div v-if="line.info.type == 'user'">
-                    <span style="color:springgreen">Online:</span> <span>{{line.info.onlineBots}}</span>
-                    <br>
-                    <span style="color:red">Offline:</span> <span>{{line.info.offlineBots}}</span>
-                  </div>
-                </md-card-content>
-              </md-card>
+              <br>
+              <md-layout md-gutter>
+                <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="75">
+                  <md-card>
+                    <md-card-header>
+                      <div class="md-title">{{line.info.id}}</div>
+                      <div class="md-subhead">{{line.info.type}} bot</div>
+                    </md-card-header>
+                    <md-card-content>
+                      <div v-if="line.info.type == 'user'">
+                        <span style="color:#4CAF50">Online:</span> <span>{{line.info.onlineBots}}</span>
+                        <br>
+                        <span style="color:#F44336">Offline:</span> <span>{{line.info.offlineBots}}</span>
+                      </div>
+                    </md-card-content>
+                  </md-card>
+                </md-layout>
+              </md-layout>
+              <br>
             </div>
 
             <div v-else>

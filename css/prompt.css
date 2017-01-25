@@ -5,10 +5,17 @@ body {
     background-color: black;
 }
 
+.has-ripple {
+  margin-bottom: 16px;
+  padding: 20px;
+  display: inline-block;
+  position: relative;
+}
+
+
 * {
   font-family: 'Roboto Mono';
   font-size:12px;
-  color:white;
 }
 
 ::-webkit-scrollbar {
@@ -20,7 +27,6 @@ input {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  background-color: black;
   border: none;
   border-width: 0px;
   outline: none;
