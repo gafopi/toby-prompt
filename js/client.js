@@ -21,7 +21,7 @@ var onDisconnect = function() {
 var onMessage = function(message) {
   if (message.tags[0] == "initial_info") {
     app.type = message.payload.type;
-    app.lines.push({text: "Connected!"});
+    app.lines.push({text: "Connected! " + moment().format("M/DD H:mm:ss")});
     app.prompt = ">>> ";
     app.focus();
   } else if (message.tags[0] == "info") {
@@ -43,6 +43,13 @@ var onMessage = function(message) {
       app.lines.push({text: message.payload['online'] + ' is online', time: moment().format("H:mm:ss"), color: "yellow"});
     } else if ('offline' in message.payload) {
       app.lines.push({text: message.payload['offline'] + ' is offline', time: moment().format("H:mm:ss"), color: "red"});
+    } else if ('status' in message.payload) {
+        if (message.payload['status'] == 200) {
+          app.lines.push({from: message.from, text: message.tags[0], time: moment().format("H:mm:ss")});
+        } else {
+          app.lines.push({from: message.from, text: message.payload['status'], time: moment().format("H:mm:ss")});
+
+        }
     } else {
       app.lines.push({from: message.from, text: JSON.stringify(message), time: moment().format("H:mm:ss")});
     }
@@ -50,6 +57,21 @@ var onMessage = function(message) {
     if ($.inArray(message.from, app.hidden) == -1) app.scrollDown();
   }
 }
+
+Vue.use(VueMaterial)
+Vue.use(VueMaterial.MdCore) //Required to boot vue material
+Vue.use(VueMaterial.MdButton)
+Vue.use(VueMaterial.MdIcon)
+Vue.use(VueMaterial.MdSidenav)
+Vue.use(VueMaterial.MdToolbar)
+
+Vue.material.registerTheme('default', {
+  primary: 'black',
+  accent: 'blue',
+  warn: 'red',
+  background: 'black'
+});
+
 
 var app = new Vue({
   el: "#app",
@@ -134,7 +156,7 @@ var app = new Vue({
             bot.follow(findHashtags(command_split.splice(1).join(" ")), "followed");
             app.command = "";
           } else {
-            app.println("usage: (f)ollow #tag1 #tag2 ...", false, red);
+            app.println("usage: (f)ollow #tag1 #tag2 ...", false, "red");
           }
           break;
 
@@ -155,19 +177,19 @@ var app = new Vue({
         case "create":
           if (app.type == "user") {
             if (command_split.length < 3) {
-              println("usage: (c)reate <newBotId> <newBotSk>", false, "red");
+              app.println("usage: (c)reate <newBotId> <newBotSk>", false, "red");
               break;
             }
             bot.createBot(command_split[1], command_split[2], "created");
 
           } else if (app.type == "standard") {
             if (command_split.length < 2) {
-              println("usage: (c)reate <persist>", false, "red");
+              app.println("usage: (c)reate <persist>", false, "red");
               break;
             }
             bot.createSocket(command_split[1], "created");
           } else if (app.type == "socket") {
-            println("warning: that will kick you off", false, "red");
+            app.println("warning: that will kick you off", false, "red");
           }
 
           break;
@@ -196,7 +218,7 @@ var app = new Vue({
         case "on":
         case "hooks on":
           if (command_split.length > 1) {
-            bot.enableHooks(command_split[1], "enabled");
+            bot.enableHooks(command_split[1], "hooks enabled");
           } else {
             app.println("usage: hooks (on) <hookSecret>", false, "red");
           }
@@ -204,7 +226,7 @@ var app = new Vue({
 
         case "off":
         case "hooks off":
-          bot.disableHooks("disabled");
+          bot.disableHooks("hooks disabled");
           break;
 
         // hide bots
@@ -257,14 +279,11 @@ var app = new Vue({
           if (bots[i].online) online += bots[i].id + " ";
           else offline += bots[i].id + " ";
         }
-        var divider = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
 
-        app.println(divider, false, "yellow");
-        app.println("ID: " + info.id, false, "springgreen");
-        app.println("Type: " + info.type, false, "springgreen");
-        app.println("Online bots: " + online, false, "springgreen");
-        app.println("Offline bots: " + offline, false, "springgreen");
-        app.println(divider, false, "yellow");
+        info.onlineBots = online;
+        info.offlineBots = offline;
+
+        app.lines.push({from: info.from, time: moment().format("H:mm:ss"), info: info});
 
       } else if (app.type == "standard") {
         app.println(JSON.stringify(info), false, "yellow");

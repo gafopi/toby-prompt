@@ -9,55 +9,95 @@
     <title>Toby Prompt</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.js" type="text/javascript"></script>
     <script src="https://s3.amazonaws.com/toby.cloud/mqttws31.js"></script>
     <script src="https://s3.amazonaws.com/toby.cloud/toby-secure.js"></script>
-    <link rel="stylesheet" href="prompt.css">
-    <!--link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css"-->
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-</head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 
+    <link rel="stylesheet" href="css/vue-material.css">
+    <link rel="stylesheet" href="css/prompt.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+</head>
 <body onclick="document.getElementById('prompt').focus();">
 
-  <div id="app" style="padding:10px;" v-bind:style="{color: mainColor}">
-    <div v-if="online">
-      <!-- History -->
-      <div v-for="(line, id) in lines">
-        <span v-if="hidden.indexOf(line.from) < 0" style="line-height:20px;">
-          <span v-if="line.time" v-bind:style="{color: timeColor}">{{line.time}}</span>
-          <span v-if="line.from" v-bind:style="{color: fromColor}">@{{line.from}}:</span>
-          <span v-bind:style="{color: line.color || mainColor}">{{line.text}}</span>
-          <div v-if="line.image">
-            <br>
-            <img style="width:500px;background-color:white;" v-bind:src="line.image">
-          </div>
-      </div>
-      <form v-on:submit="enterCommand">
-        <!-- MAIN PROMPT -->
-        <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
-      </form>
+  <div id="app" v-bind:style="{color: mainColor}">
+
+    <!-- TOOLBAR -->
+    <div v-if="!online">
+      <md-toolbar><h1 class="md-title">toby</h1></md-toolbar>
     </div>
-    <div v-else>
-      <div v-if="id == ''">
-        <!-- ENTER USERNAME -->
-        <form v-on:submit="enterUsername">
-          <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+
+    <div style="padding:20px;">
+
+      <!-- BOT IS ONLINE -->
+      <div v-if="online">
+
+        <!-- History -->
+        <div v-for="(line, id) in lines">
+          <span v-if="hidden.indexOf(line.from) < 0" style="line-height:20px;">
+
+            <div v-if="line.info">
+              <md-card>
+                <md-card-header>
+                  <div class="md-title">{{line.info.id}}</div>
+                  <div class="md-subhead">{{line.info.type}} bot</div>
+                </md-card-header>
+                <md-card-content>
+                  <div v-if="line.info.type == 'user'">
+                    <span style="color:springgreen">Online:</span> <span>{{line.info.onlineBots}}</span>
+                    <br>
+                    <span style="color:red">Offline:</span> <span>{{line.info.offlineBots}}</span>
+                  </div>
+                </md-card-content>
+              </md-card>
+            </div>
+
+            <div v-else>
+              <!-- TIME -->
+              <span v-if="line.time" v-bind:style="{color: timeColor}">{{line.time}}</span>
+              <!-- FROM -->
+              <span v-if="line.from" v-bind:style="{color: fromColor}">@{{line.from}}:</span>
+              <!-- TEXT -->
+              <span v-bind:style="{color: line.color || mainColor}">{{line.text}}</span>
+              <!-- IMAGE -->
+              <div v-if="line.image">
+                <br>
+                <img style="width:500px;background-color:white;" v-bind:src="line.image">
+              </div>
+            </div>
+        </div>
+
+        <!-- MAIN PROMPT -->
+        <form v-on:submit="enterCommand">
+          <span style="line-height:20px;">{{prompt}} <nobr><input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></nobr></span><br>
         </form>
+
       </div>
+
+      <!-- BOT IS OFFLINE -->
       <div v-else>
-        <!-- ENTER PASSWORD -->
-        <form v-on:submit="enterPassword">
-          <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
-        </form>
+        <div v-if="id == ''">
+          <!-- ENTER USERNAME -->
+          <form v-on:submit="enterUsername">
+            <span style="line-height:20px;overflow: hidden;white-space: nowrap;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+          </form>
+        </div>
+        <div v-else>
+          <!-- ENTER PASSWORD -->
+          <form v-on:submit="enterPassword">
+            <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+          </form>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <div><img style="position:fixed;width:30px;bottom:0;right:0;padding:5px;" src="toby.png"></div>
+  <div><img style="position:fixed;width:40px;bottom:0;right:0;padding:5px;z-index:100;" src="img/toby.png"></div>
 
-  <script type="text/javascript" src="client.js"></script>
+  <script type="text/javascript" src="js/vue-material.js"></script>
+  <script type="text/javascript" src="js/client.js"></script>
 
 </body>
 </html>
