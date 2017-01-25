@@ -86,7 +86,7 @@
         <div v-else>
           <!-- ENTER PASSWORD -->
           <form v-on:submit="enterPassword">
-            <span style="line-height:20px;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
+            <span style="line-height:20px;overflow: hidden;white-space: nowrap;">{{prompt}} <input type="text" v-model="command" id="prompt" autofocus autocomplete="off"></span><br>
           </form>
         </div>
       </div>

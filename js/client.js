@@ -134,7 +134,7 @@ var app = new Vue({
       if (!command) return;
       var command_split = command.split(" ");
 
-      switch(command_split[0]) {
+      switch(command_split[0].toLowerCase()) {
         // send message
         case "s":
         case "send":
