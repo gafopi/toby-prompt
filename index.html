@@ -17,14 +17,21 @@
     <link rel="stylesheet" href="css/vue-material.css">
     <link rel="stylesheet" href="css/prompt.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+    <link rel="stylesheet" href="https:////fonts.googleapis.com/icon?family=Material+Icons">
 
 </head>
 <body onclick="document.getElementById('prompt').focus();">
 
   <div id="app" v-bind:style="{color: mainColor}">
+
     <!-- TOOLBAR -->
     <div v-if="!online">
-      <md-toolbar><h1 class="md-title">toby</h1></md-toolbar>
+      <md-toolbar>
+        <h2 class="md-title" style="flex: 1">toby</h2>
+        <md-button class="md-icon-button">
+          <a href="./signup.html" style="color:black;"><md-icon>cake</md-icon></a>
+        </md-button>
+      </md-toolbar>
     </div>
 
     <div style="padding:20px;">
@@ -36,26 +43,34 @@
         <div v-for="(line, id) in lines">
           <span v-if="hidden.indexOf(line.from) < 0" style="line-height:20px;">
 
+            <!-- INFO -->
             <div v-if="line.info">
-              <br>
-              <md-layout md-gutter>
-                <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="75">
-                  <md-card>
-                    <md-card-header>
-                      <div class="md-title">{{line.info.id}}</div>
-                      <div class="md-subhead">{{line.info.type}} bot</div>
-                    </md-card-header>
-                    <md-card-content>
-                      <div v-if="line.info.type == 'user'">
-                        <span style="color:#4CAF50">Online:</span> <span>{{line.info.onlineBots}}</span>
-                        <br>
-                        <span style="color:#F44336">Offline:</span> <span>{{line.info.offlineBots}}</span>
-                      </div>
-                    </md-card-content>
-                  </md-card>
+              <div v-if="id == lines.length-1">
+                <br>
+                <md-layout md-gutter>
+                  <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="75">
+                    <md-card style="width:500px;" md-with-hover>
+                      <md-card-header>
+                        <div class="md-title">{{line.info.id}}</div>
+                        <div class="md-subhead">{{line.info.type}} bot</div>
+                      </md-card-header>
+                      <md-card-content>
+                        <div v-if="line.info.type == 'user'">
+                          <md-tabs style="background-color:white !important;">
+                            <md-tab style="background-color:white !important;" id="online" md-label="Online">
+                              {{line.info.onlineBots}}
+                            </md-tab>
+                            <md-tab style="background-color:white !important;" id="offline" md-label="Offline">
+                              {{line.info.offlineBots}}
+                            </md-tab>
+                          </md-tabs>
+                        </div>
+                      </md-card-content>
+                    </md-card>
+                  </md-layout>
                 </md-layout>
-              </md-layout>
-              <br>
+                <br>
+              </div>
             </div>
 
             <div v-else>
@@ -68,7 +83,12 @@
               <!-- IMAGE -->
               <div v-if="line.image">
                 <br>
-                <img style="width:500px;background-color:white;" v-bind:src="line.image">
+                <md-layout md-gutter>
+                  <md-card md-with-hover>
+                    <img style="width:500px;background-color:white;" v-bind:src="line.image">
+                  </md-card>
+                </md-layout>
+                <br>
               </div>
             </div>
         </div>
@@ -82,6 +102,7 @@
 
       <!-- BOT IS OFFLINE -->
       <div v-else>
+
         <div v-if="id == ''">
           <!-- ENTER USERNAME -->
           <form v-on:submit="enterUsername">

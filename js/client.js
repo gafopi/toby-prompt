@@ -35,7 +35,9 @@ var onMessage = function(message) {
 
     // display message if available, otherwise stringify the payload
     if ('message' in message.payload) {
-      app.lines.push({from: message.from, text: message.payload['message'] + tags, time: moment().format("H:mm:ss")});
+      if ($.inArray(message.from, app.hidden) == -1) {
+        app.lines.push({from: message.from, text: message.payload['message'] + tags, time: moment().format("H:mm:ss")});
+      }
     } else if ('png' in message.payload) {
       app.lines.push({from: message.from, image: "data:image/png;base64," + message.payload['png'], time: moment().format("H:mm:ss")});
     } else if ('online' in message.payload) {
@@ -50,7 +52,9 @@ var onMessage = function(message) {
 
         }
     } else {
-      app.lines.push({from: message.from, text: JSON.stringify(message), time: moment().format("H:mm:ss")});
+      if ($.inArray(message.from, app.hidden) == -1) {
+        app.lines.push({from: message.from, text: JSON.stringify(message), time: moment().format("H:mm:ss")});
+      }
     }
 
     if ($.inArray(message.from, app.hidden) == -1) app.scrollDown();
@@ -65,7 +69,7 @@ Vue.use(VueMaterial.MdSidenav)
 Vue.use(VueMaterial.MdToolbar)
 
 Vue.material.registerTheme('default', {
-  primary: 'red',
+  primary: 'white',
   accent: 'blue',
   warn: 'red',
   background: 'white'
@@ -89,6 +93,16 @@ var app = new Vue({
     timeColor: "grey"
   },
   methods: {
+    reset: function() {
+      this.online = false;
+      this.id = "";
+      this.type = "";
+      this.command = "";
+      this.history = [];
+      this.lines = [];
+      this.hidden = [];
+      this.prompt = "botname: ";
+    },
     scrollDown: function() {
         setTimeout(function() {
           window.scrollTo(0,document.body.scrollHeight);
@@ -96,7 +110,6 @@ var app = new Vue({
     },
     focus: function() {
       document.getElementById('prompt').focus();
-
     },
     println: function(text, from, color) {
         app.lines.push({text: text, from: from || false, color: color || app.mainColor});
@@ -256,6 +269,7 @@ var app = new Vue({
         case "quit":
         case "logout":
         case "exit":
+          this.reset();
           location.reload();
         // empty
         case "":
@@ -305,19 +319,19 @@ focus = function() {
 checkKey = function(e) {
   if (!app.online) return;
     switch (e.keyCode) {
-        case 38:
-            // up
-            if (app.historyIndex > 0) {
-              app.historyIndex -= 1;
-              app.command = app.history[app.historyIndex];
-            }
-            break;
-        case 40:
-            // down
-            if (app.historyIndex < app.history.length) {
-              app.historyIndex += 1;
-              app.command = app.history[app.historyIndex];
-            }
-            break;
+      case 38:
+        // up
+        if (app.historyIndex > 0) {
+          app.historyIndex -= 1;
+          app.command = app.history[app.historyIndex];
+        }
+        break;
+      case 40:
+        // down
+        if (app.historyIndex < app.history.length) {
+          app.historyIndex += 1;
+          app.command = app.history[app.historyIndex];
+        }
+        break;
     }
 };
